@@ -1,25 +1,126 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit Student</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="container mt-4">
+@extends('layouts.app')
 
-<h2>Edit Student</h2>
+@section('title', 'Edit Student')
+@section('page-title', 'Edit Student')
 
-<form method="POST" action="{{ route('students.update',$student->id) }}">
-@csrf
-@method('PUT')
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('students.index') }}">Students</a></li>
+    <li class="breadcrumb-item active">Edit</li>
+@endsection
 
-<input class="form-control mb-2" name="name" value="{{ $student->name }}">
-<input class="form-control mb-2" name="email" value="{{ $student->email }}">
-<input class="form-control mb-2" name="course" value="{{ $student->course }}">
-<input class="form-control mb-2" name="phone" value="{{ $student->phone }}">
+@section('content')
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="bi bi-pencil-square me-2"></i>Edit Student Information
+                </h3>
+            </div>
+            
+            <form method="POST" action="{{ route('students.update', $student) }}">
+                @csrf
+                @method('PUT')
+                
+                <div class="card-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <h5 class="alert-heading">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>Please fix the following errors:
+                            </h5>
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
 
-<button class="btn btn-primary">Update</button>
-<a href="{{ route('students.index') }}" class="btn btn-secondary">Back</a>
-</form>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">
+                            Full Name <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" 
+                                   class="form-control @error('name') is-invalid @enderror" 
+                                   id="name" 
+                                   name="name" 
+                                   value="{{ old('name', $student->name) }}"
+                                   required>
+                            @error('name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
 
-</body>
-</html>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">
+                            Email Address <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" 
+                                   class="form-control @error('email') is-invalid @enderror" 
+                                   id="email" 
+                                   name="email" 
+                                   value="{{ old('email', $student->email) }}"
+                                   required>
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="course" class="form-label">
+                            Course <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-book"></i></span>
+                            <input type="text" 
+                                   class="form-control @error('course') is-invalid @enderror" 
+                                   id="course" 
+                                   name="course" 
+                                   value="{{ old('course', $student->course) }}"
+                                   required>
+                            @error('course')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">
+                            Phone Number <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                            <input type="tel" 
+                                   class="form-control @error('phone') is-invalid @enderror" 
+                                   id="phone" 
+                                   name="phone" 
+                                   value="{{ old('phone', $student->phone) }}"
+                                   required>
+                            @error('phone')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-2"></i>Update Student
+                    </button>
+                    <a href="{{ route('students.index') }}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endsection

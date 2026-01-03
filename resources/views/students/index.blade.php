@@ -1,70 +1,114 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Students</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-blue-50 min-h-screen p-6">
+@extends('layouts.app')
 
-    <div class="max-w-6xl mx-auto">
+@section('title', 'Students List')
+@section('page-title', 'Students Management')
 
-        <!-- Page Heading -->
-        <h2 class="text-3xl font-bold text-gray-800 mb-6">Student List</h2>
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+    <li class="breadcrumb-item active">Students</li>
+@endsection
 
-        <!-- Add Student Button -->
-        <a href="{{ route('students.create') }}"
-           class="inline-block mb-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition">
-           Add Student
-        </a>
-
+@section('content')
+<div class="row">
+    <div class="col-12">
         <!-- Success Message -->
         @if(session('success'))
-        <div class="mb-4 px-4 py-3 rounded bg-green-200 text-green-800">
-            {{ session('success') }}
-        </div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         @endif
 
-        <!-- Students Table -->
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-white border border-gray-200 shadow-sm rounded">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="px-4 py-2 text-left text-gray-700 font-medium border-b">Name</th>
-                        <th class="px-4 py-2 text-left text-gray-700 font-medium border-b">Email</th>
-                        <th class="px-4 py-2 text-left text-gray-700 font-medium border-b">Course</th>
-                        <th class="px-4 py-2 text-left text-gray-700 font-medium border-b">Phone</th>
-                        <th class="px-4 py-2 text-left text-gray-700 font-medium border-b">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($students as $student)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-2 border-b">{{ $student->name }}</td>
-                        <td class="px-4 py-2 border-b">{{ $student->email }}</td>
-                        <td class="px-4 py-2 border-b">{{ $student->course }}</td>
-                        <td class="px-4 py-2 border-b">{{ $student->phone }}</td>
-                        <td class="px-4 py-2 border-b space-x-2">
-                            <a href="{{ route('students.edit',$student->id) }}"
-                               class="px-3 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500 transition text-sm">
-                               Edit
-                            </a>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">All Students</h3>
+                <div class="card-tools">
+                    <a href="{{ route('students.create') }}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-circle me-1"></i>Add New Student
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card-body p-0">
+                @if($students->count() > 0)
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px">#</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Course</th>
+                                    <th>Phone</th>
+                                    <th style="width: 150px">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($students as $index => $student)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>
+                                            <i class="bi bi-person-circle me-2 text-primary"></i>
+                                            {{ $student->name }}
+                                        </td>
+                                        <td>
+                                            <i class="bi bi-envelope me-2 text-muted"></i>
+                                            {{ $student->email }}
+                                        </td>
+                                        <td>
+                                            <i class="bi bi-book me-2 text-success"></i>
+                                            {{ $student->course }}
+                                        </td>
+                                        <td>
+                                            <i class="bi bi-telephone me-2 text-info"></i>
+                                            {{ $student->phone }}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="{{ route('students.edit', $student) }}" 
+                                                   class="btn btn-warning btn-sm" 
+                                                   title="Edit">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                                <form action="{{ route('students.destroy', $student) }}" 
+                                                      method="POST" 
+                                                      class="d-inline"
+                                                      onsubmit="return confirm('Are you sure you want to delete this student?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" 
+                                                            class="btn btn-danger btn-sm" 
+                                                            title="Delete">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox display-1 text-muted"></i>
+                        <p class="mt-3 text-muted">No students found. Add your first student!</p>
+                        <a href="{{ route('students.create') }}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-1"></i>Add Student
+                        </a>
+                    </div>
+                @endif
+            </div>
 
-                            <form action="{{ route('students.destroy',$student->id) }}" method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                        class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm">
-                                    Delete
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+            @if($students->count() > 0)
+                <div class="card-footer clearfix">
+                    <div class="float-start">
+                        Showing {{ $students->count() }} student(s)
+                    </div>
+                </div>
+            @endif
         </div>
-
     </div>
-
-</body>
-</html>
+</div>
+@endsection
