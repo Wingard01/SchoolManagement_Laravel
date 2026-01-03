@@ -546,7 +546,7 @@
 
             @if (Route::has('register'))
             <div class="register-link">
-                Don't have an account? <a href="{{ route('register') }}">Sign up for free</a>
+                Don't have an account? <a href="{{ route('register') }}">Sign up</a>
             </div>
             @endif
         </div>
